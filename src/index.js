@@ -35,13 +35,13 @@ function plugin(options) {
     if (_.isArray(options)) {
         _.each(options, function(optionsItem) {
           addImagesToFiles(files, metalsmith, done, optionsItem);
-        })
+        });
     }
 }
 
 function addImagesToFiles(files, metalsmith, done, options) {
   // set options
-  options = normalizeOptions(options)
+  options = normalizeOptions(options);
 
   // get matching files
   var matchingFiles = getMatchingFiles(files, options.pattern);
@@ -52,18 +52,16 @@ function addImagesToFiles(files, metalsmith, done, options) {
 
     var imagesPath = path.join(metalsmith.source(), path.dirname(file), options.imagesDirectory);
     var dirFiles = fs.readdirSync(imagesPath);
-    files[file].images = files[file].images || [];
+    files[file].images = files[file].images || {};
 
     // add files as images metadata
     _.each(dirFiles, function(dirFile) {
       // check extension and remove thumbnails
       if (isAuthorizedFile(dirFile, options.authorizedExts)) {
         var imagePath = path.join(files[file].path.dir, options.imagesDirectory, dirFile);
-        files[file].images.push(imagePath);
+        files[file].images[dirFile] = files[imagePath];
       }
     });
-
-    files[file].images = _.uniq(files[file].images);
   });
 };
 
